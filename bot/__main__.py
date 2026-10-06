@@ -1,13 +1,4 @@
-"""
-Telegram bot entry point.
-
-Render Start Command:
-    python -m bot
-
-IMPORTANT:
-Do not use asyncio.run() here.
-The application.run_polling() function manages the event loop.
-"""
+# bot/__main__.py
 
 from .app import main
 
