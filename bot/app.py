@@ -144,17 +144,42 @@ async def callbacks(update, context):
     else:
         await q.message.reply_text("Send a TeraBox or NotyDrive share link.")
 
-async def main():
+def main():
     if not BOT_TOKEN:
-        raise SystemExit("BOT_TOKEN missing. Copy .env.example to .env.")
+        raise SystemExit(
+            "BOT_TOKEN missing. Add BOT_TOKEN in Render Environment Variables."
+        )
+
     app = Application.builder().token(BOT_TOKEN).build()
+
     for cmd, fn in [
-        ("start", start), ("help", help_cmd), ("profile", profile), ("premium", premium),
-        ("cancel", cancel), ("admin", admin), ("users", users), ("stats", stats),
-        ("givepremium", givepremium), ("removepremium", removepremium),
-        ("block", block), ("unblock", unblock), ("broadcast", broadcast)]:
+        ("start", start),
+        ("help", help_cmd),
+        ("profile", profile),
+        ("premium", premium),
+        ("cancel", cancel),
+        ("admin", admin),
+        ("users", users),
+        ("stats", stats),
+        ("givepremium", givepremium),
+        ("removepremium", removepremium),
+        ("block", block),
+        ("unblock", unblock),
+        ("broadcast", broadcast),
+    ]:
         app.add_handler(CommandHandler(cmd, fn))
+
     app.add_handler(CallbackQueryHandler(callbacks))
-    app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_link))
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT & ~filters.COMMAND,
+            handle_link,
+        )
+    )
+
     log.info("Starting bot")
-    await app.run_polling(close_loop=False)
+
+    app.run_polling(
+        close_loop=True,
+        drop_pending_updates=True,
+    )
